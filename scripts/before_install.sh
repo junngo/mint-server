@@ -3,5 +3,3 @@ docker-compose down
 
 cd /home/ec2-user/work
 rm -rf ./mint-server
-
-git clone https://github.com/junngo/mint-server.git
