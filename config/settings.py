@@ -29,16 +29,22 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '13.124.54.154']
 
 
 # Application definition
-
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+THIRD_PARTY_APPS = [
+    'django_apscheduler',
+]
+LOCAL_APPS = [
     'stock.apps.StockConfig',
 ]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,3 +130,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Batch Job
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
+SCHEDULER_DEFAULT = False
+
+# Todo - Set the Logging
