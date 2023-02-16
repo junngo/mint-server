@@ -3,15 +3,26 @@ version: '3'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./:/usr/src/app/
     ports:
       - 8000:8000
+    # depends_on:
+    #   - db
   nginx:
     build: ./nginx
     ports:
       - "80:80"
     depends_on:
       - web
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=mint_server_user
+      - POSTGRES_PASSWORD=mint_server_password
+      - POSTGRES_DB=mint
+volumes:
+  postgres_data:

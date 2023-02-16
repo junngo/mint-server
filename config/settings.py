@@ -38,6 +38,8 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 THIRD_PARTY_APPS = [
+    'corsheaders',
+    'rest_framework',
     'django_apscheduler',
 ]
 LOCAL_APPS = [
@@ -49,6 +51,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,6 +60,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 TEMPLATES = [
     {
@@ -79,12 +86,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+import os
+# https://github.com/saintdragon2/do_it_django_a_to_z
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.environ.get('SQL_DATABASE', os.path.join(BASE_DIR, 'mint')),
+    #     'USER': os.environ.get('SQL_USER', 'mint_server_user'),
+    #     'PASSWORD': os.environ.get('SQL_PASSWORD', 'mint_server_password'),
+    #     'HOST': os.environ.get('SQL_HOST', 'localhost'),
+    #     'PORT': os.environ.get("SQL_PORT", '5432'),
+    # }
 }
 
 
@@ -118,7 +134,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

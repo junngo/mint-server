@@ -14,7 +14,7 @@ def start():
     scheduler.add_jobstore(DjangoJobStore(), 'djangojobstore')
     register_events(scheduler)
 
-    # @scheduler.scheduled_job('cron', minute="10", name='get_stock_price')
+    @scheduler.scheduled_job('cron', minute="30", name='get_stock_price')
     def register_get_stock_price():
         get_stock_price()
     
@@ -28,7 +28,7 @@ def get_stock_price():
 
     stocks = Stock.objects.all()
     for stock in stocks:
-        df = fdr.DataReader(stock.ticker, '2023')
+        df = fdr.DataReader(stock.ticker, '2020')
         for idx, row in df.iterrows():
             StockPrice.objects.create(
                 stock_id = stock,
