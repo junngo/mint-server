@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%27)_m46l!2b@j95hr)*+jpkgvcnyyzotn!7qn(jnzqde1s^e3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '13.124.54.154']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -90,17 +90,13 @@ import os
 # https://github.com/saintdragon2/do_it_django_a_to_z
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('SQL_DATABASE', 'mint'),
+        'USER': os.environ.get('SQL_USER', 'mint_server_user'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', 'mint_server_password'),
+        'HOST': os.environ.get('SQL_HOST', 'db'),
+        'PORT': os.environ.get("SQL_PORT", '5432'),
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.environ.get('SQL_DATABASE', os.path.join(BASE_DIR, 'mint')),
-    #     'USER': os.environ.get('SQL_USER', 'mint_server_user'),
-    #     'PASSWORD': os.environ.get('SQL_PASSWORD', 'mint_server_password'),
-    #     'HOST': os.environ.get('SQL_HOST', 'localhost'),
-    #     'PORT': os.environ.get("SQL_PORT", '5432'),
-    # }
 }
 
 
@@ -128,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -141,6 +137,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, '_static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

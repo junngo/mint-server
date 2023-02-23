@@ -10,15 +10,18 @@ logger = logging.getLogger(__name__)
 
 
 def start():
-    scheduler=BackgroundScheduler()
+    scheduler=BackgroundScheduler(timezone='Asia/Seoul')
     scheduler.add_jobstore(DjangoJobStore(), 'djangojobstore')
     register_events(scheduler)
 
-    @scheduler.scheduled_job('cron', minute="30", name='get_stock_price')
+    @scheduler.scheduled_job('cron', minute="33", hour="7", name='get_stock_price')
     def register_get_stock_price():
         get_stock_price()
     
-    scheduler.start()
+    try:
+        scheduler.start()
+    except KeyboardInterrupt:
+        scheduler.shutdown()
 
 def get_stock_price():
     """

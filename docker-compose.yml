@@ -10,6 +10,7 @@ services:
         chmod +x ./scripts/wait-for-it.sh
         ./scripts/wait-for-it.sh db:5432 --
         python manage.py migrate --noinput
+        python manage.py collectstatic
         gunicorn config.wsgi:application --bind 0.0.0.0:8000 --reload
     volumes:
       - ./:/usr/src/app/
@@ -17,6 +18,8 @@ services:
       - 8000:8000
     depends_on:
       - db
+    environment:
+      TZ: "Asia/Seoul"
   nginx:
     build: ./nginx
     ports:
@@ -27,8 +30,6 @@ services:
     image: postgres:12.0-alpine
     container_name: mint_postgres
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=mint_server_user
       - POSTGRES_PASSWORD=mint_server_password
