@@ -16,8 +16,8 @@ services:
       - ./:/usr/src/app/
     ports:
       - 8000:8000
-    depends_on:
-      - db
+    env_file:
+      - ../.env.prod
     environment:
       TZ: "Asia/Seoul"
   nginx:
@@ -26,15 +26,5 @@ services:
       - "80:80"
     depends_on:
       - web
-  db:
-    image: postgres:12.0-alpine
-    container_name: mint_postgres
-    restart: always
-    environment:
-      - POSTGRES_USER=mint_server_user
-      - POSTGRES_PASSWORD=mint_server_password
-      - POSTGRES_DB=mint
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
 volumes:
   postgres_data:

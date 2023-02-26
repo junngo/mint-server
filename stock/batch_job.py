@@ -14,7 +14,7 @@ def start():
     scheduler.add_jobstore(DjangoJobStore(), 'djangojobstore')
     register_events(scheduler)
 
-    @scheduler.scheduled_job('cron', minute="33", hour="7", name='get_stock_price')
+    @scheduler.scheduled_job('cron', minute="33", hour="16", name='get_stock_price')
     def register_get_stock_price():
         get_stock_price()
     

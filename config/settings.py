@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%27)_m46l!2b@j95hr)*+jpkgvcnyyzotn!7qn(jnzqde1s^e3'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-%27)_m46l!2b@j95hr)*+jpkgvcnyyzotn!7qn(jnzqde1s^e3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get('DEBUG', True))
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -61,9 +65,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+if os.environ.get('ALLOWED_HOSTS'):
+    CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS').split(' ')
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+    ]
 
 TEMPLATES = [
     {
@@ -86,8 +93,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-import os
-# https://github.com/saintdragon2/do_it_django_a_to_z
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -146,6 +151,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Batch Job
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
-SCHEDULER_DEFAULT = False
+SCHEDULER_DEFAULT = bool(os.environ.get("SCHEDULER_DEFAULT", True))
 
 # Todo - Set the Logging
