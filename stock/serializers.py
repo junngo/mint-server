@@ -37,7 +37,7 @@ class GetAllStocks(serializers.ModelSerializer):
         1년 전 ~ 현재까지 기준으로 추출
         """
         now = datetime.now()
-        start_date = now - timedelta(days=10)
+        start_date = now - timedelta(days=60)
         end_date = now
         stock_price = models.StockPrice.objects.filter(
             stock_id=obj.id, 
