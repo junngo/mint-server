@@ -20,10 +20,10 @@ class Stock(models.Model):
 
     ticker = models.CharField(max_length=20)
     ticker_name = models.CharField(max_length=100)
-    stock_maket = models.ForeignKey(StockMarket, on_delete=models.PROTECT, related_name="stock", null=True, blank=True)
+    stock_market = models.ForeignKey(StockMarket, on_delete=models.PROTECT, related_name="stock", null=True, blank=True)
 
     def __str__(self) -> str:
-        return self.ticker
+        return f"{self.ticker} - {self.ticker_name}"
 
 
 class StockPrice(models.Model):

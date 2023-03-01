@@ -155,6 +155,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Batch Job
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
-SCHEDULER_DEFAULT = bool(os.environ.get("SCHEDULER_DEFAULT", False))
+SCHEDULER_DEFAULT = bool(os.environ.get("SCHEDULER_DEFAULT", True))
 
 # Todo - Set the Logging
