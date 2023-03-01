@@ -1,38 +1,11 @@
 import FinanceDataReader as fdr
 import logging
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import register_events, DjangoJobStore
 from .models import Stock, StockPrice, StockMarket
 
 
 logger = logging.getLogger(__name__)
 
-
-def start():
-    scheduler=BackgroundScheduler(timezone='Asia/Seoul')
-    scheduler.add_jobstore(DjangoJobStore(), 'djangojobstore')
-    # register_events(scheduler)
-
-    @scheduler.scheduled_job(
-        'cron',
-        minute="30",
-        hour="1",
-        max_instances=1,
-        name='get_stock_list_kr'
-    )
-    def register_get_stock_list_kr():
-        get_stock_list_kr()
-
-
-    @scheduler.scheduled_job('cron', minute="33", hour="16", max_instances=1, name='get_stock_price')
-    def register_get_stock_price():
-        get_stock_price()
-    
-    try:
-        scheduler.start()
-    except KeyboardInterrupt:
-        scheduler.shutdown()
 
 def get_stock_list_kr():
     """

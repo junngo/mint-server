@@ -44,7 +44,6 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework',
-    'django_apscheduler',
     'django_summernote',
 ]
 LOCAL_APPS = [
@@ -152,9 +151,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Batch Job
-APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
-SCHEDULER_DEFAULT = bool(os.environ.get("SCHEDULER_DEFAULT", True))
 
 # Todo - Set the Logging
