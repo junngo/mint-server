@@ -1,0 +1,39 @@
+import datetime
+from django.core.management.base import BaseCommand
+
+import stock.batch_job as jobs
+
+
+class Command(BaseCommand): 
+    help = 'Show post list'
+
+    def add_arguments(self, parser): 
+        parser.add_argument('-j' , '--job' , required=True, type=str, help="Job names") 
+        parser.add_argument('-d' , '--date', required=False, type=str)
+
+    def handle(self, *args, **options):
+        job = options["job"]
+        date = options["date"]
+        if date:
+            try:
+                datetime.date.fromisoformat(date)
+            except ValueError:
+                raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
+        if job == "stock_list_kr":
+            # 국내 종목 리스트
+            jobs.get_stock_list("KR")
+        elif job == "stock_list_us":
+            # 해외 종목 리스트
+            jobs.get_stock_list("US")
+        elif job == "stock_day_price_kr":
+            # 국내 일 주식 가격 조회
+            jobs.get_day_stock_price("KR")
+        elif job == "stock_day_price_us":
+            # 해외 일 주식 가격 조회
+            jobs.get_day_stock_price("US")
+        elif job == "stock_allday_price":
+            # 21년 ~ 현재까지 주식 가격 조회
+            jobs.get_allday_stock_price()
+        else:
+            self.stderr.write("Not exists the job batch")

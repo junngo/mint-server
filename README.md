@@ -23,3 +23,9 @@ psql --username mint_server_user --dbname mint
 # db데이터(volume) 삭제
 docker-compose down --volumes
 ```
+
+## Batch Job List
+
+```
+docker-compose exec web python manage.py runjob --job stock_list_kr
+```

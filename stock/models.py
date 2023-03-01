@@ -5,9 +5,16 @@ class StockMarket(models.Model):
     """
     Stock Market (e.x, Nasdaq)
     """
+
+    KR = 'KR'
+    US = 'US'
+    COUNTRY = [
+        (KR, KR),
+        (US, US),
+    ]
     name = models.CharField(max_length=20)
     summary = models.CharField(max_length=20)
-    country = models.CharField(max_length=20, null=True, blank=True)
+    country = models.CharField(max_length=3, choices=COUNTRY, null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.name} - {self.summary}({self.country})"
@@ -33,10 +40,10 @@ class StockPrice(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['stock_id', 'stock_date']),
+            models.Index(fields=['stock', 'stock_date']),
         ]
 
-    stock_id = models.ForeignKey(Stock, on_delete=models.PROTECT, related_name="stock_price")
+    stock = models.ForeignKey(Stock, on_delete=models.PROTECT, related_name="stock_price")
     stock_date = models.DateTimeField()
     open_price = models.DecimalField(max_digits=14, decimal_places=6, default=None, blank=True, null=True)
     high_price = models.DecimalField(max_digits=14, decimal_places=6, default=None, blank=True, null=True)
@@ -47,7 +54,7 @@ class StockPrice(models.Model):
     change = models.DecimalField(max_digits=14, decimal_places=6, default=None, blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.stock_id.ticker}: {self.stock_date}"
+        return f"{self.stock.ticker}-{self.stock.ticker_name}: {self.stock_date.date()}"
 
 
 class Portfolio(models.Model):

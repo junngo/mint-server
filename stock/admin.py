@@ -14,8 +14,13 @@ class PortfolioAdmin(SummernoteModelAdmin):
     summernote_fields = ('description',)
 
 
+class StockAdmin(admin.ModelAdmin):
+    list_filter = ('stock_market',)
+    search_fields = ('ticker', 'ticker_name',)
+
+
 admin.site.register(StockMarket)
-admin.site.register(Stock)
+admin.site.register(Stock, StockAdmin)
 admin.site.register(StockPrice)
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(PortfolioStock)

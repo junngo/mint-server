@@ -152,4 +152,40 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Todo - Set the Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} :: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.environ.get("LOG_DIR", os.path.join(BASE_DIR, 'logs/log.log')),
+            'backupCount': 30,      # 30 days backup
+            'when': 'midnight',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'stock': {
+            'handlers': ['console', 'file'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
