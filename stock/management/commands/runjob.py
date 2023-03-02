@@ -1,7 +1,11 @@
 import datetime
+import logging
+
 from django.core.management.base import BaseCommand
 
 import stock.batch_job as jobs
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand): 
@@ -36,4 +40,4 @@ class Command(BaseCommand):
             # 21년 ~ 현재까지 주식 가격 조회
             jobs.get_allday_stock_price()
         else:
-            self.stderr.write("Not exists the job batch")
+            logger.info("배치 잡 명령어가 존재하지 않습니다.")            

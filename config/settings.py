@@ -65,7 +65,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-if os.environ.get('ALLOWED_HOSTS'):
+if os.environ.get('CORS_ALLOWED_ORIGINS'):
     CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS').split(' ')
 else:
     CORS_ALLOWED_ORIGINS = [
@@ -175,7 +175,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.environ.get("LOG_DIR", os.path.join(BASE_DIR, 'logs/log.log')),
+            'filename': os.environ.get("LOG_DIR", os.path.join(BASE_DIR, 'logs/stock.log')),
             'backupCount': 30,      # 30 days backup
             'when': 'midnight',
             'formatter': 'verbose'
@@ -186,6 +186,10 @@ LOGGING = {
             'handlers': ['console', 'file'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
         },
     },
 }
