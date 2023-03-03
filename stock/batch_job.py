@@ -88,3 +88,7 @@ def get_allday_stock_price():
                 change = row.get("Change", None),
             )
     logger.info("[get_allday_stock_price] 종료")
+
+
+def test_job():
+    logger.info("[test_job] 테스트 잡 실행 및 종료")
