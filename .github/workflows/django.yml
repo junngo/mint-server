@@ -24,7 +24,11 @@ jobs:
     - name: Install Dependencies
       run: |
         mkdir logs
+        docker-compose pull
         docker-compose build
+    - name: Wait Connecting DB
+      run: |
+        docker-compose run web python manage.py wait_for_db
     - name: Run Tests
       run: |
         docker-compose run web python manage.py test
