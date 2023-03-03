@@ -11,7 +11,8 @@ docker-compose build
 docker-compose run
 
 # 테스트 코드
-docker-compose exec web python manage.py test
+docker-compose exec web python manage.py test # when running the container
+docker-compose run web python manage.py test # when not Running the container
 
 # admin 계정 생성
 docker-compose exec web python manage.py createsuperuser
