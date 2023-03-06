@@ -85,8 +85,9 @@ target/
 __pycache__/
 local_settings.py
 
-.env
+.env*
 db.sqlite3
 _static
 _media
 logs
+stock_config.yaml

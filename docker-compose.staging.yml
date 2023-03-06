@@ -16,7 +16,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ./.env
+      - ./.env.staging
     environment:
       TZ: "Asia/Seoul"
   nginx:

@@ -180,6 +180,14 @@ LOGGING = {
             'when': 'midnight',
             'formatter': 'verbose'
         },
+        'bot_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.environ.get("LOG_DIR", os.path.join(BASE_DIR, 'logs/bot.log')),
+            'backupCount': 30,      # 30 days backup
+            'when': 'midnight',
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'stock': {
@@ -190,6 +198,11 @@ LOGGING = {
         'django': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
+        },
+        'bot': {
+            'handlers': ['console', 'file'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
         },
     },
 }

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand): 
-    help = 'Show post list'
+    help = 'Run the Job'
 
     def add_arguments(self, parser): 
         parser.add_argument('-j' , '--job' , required=True, type=str, help="Job names") 
@@ -24,6 +24,7 @@ class Command(BaseCommand):
             except ValueError:
                 raise ValueError("Incorrect data format, should be YYYY-MM-DD")
 
+        logger.info(f"[{job}] 시작")
         if job == "stock_list_kr":
             # 국내 종목 리스트
             jobs.get_stock_list("KR")
@@ -42,4 +43,7 @@ class Command(BaseCommand):
         elif job == "test_job":
             jobs.test_job()
         else:
-            logger.info("배치 잡 명령어가 존재하지 않습니다.")            
+            logger.info("배치 잡 명령어가 존재하지 않습니다.")
+            return
+
+        logger.info(f"[{job}] 종료")
