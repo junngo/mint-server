@@ -27,7 +27,7 @@ class Verifier:
                 raise Exception("[validate] config.yaml 로드 에러")
 
         self.config = conf[work_env]
-        self.config.update({"ENV": work_env})
+        self.config.update({"WORK_ENV": work_env})
         self.config.update({"ROOT_PATH": self.root_path})
 
         # 2. 실행할 배치 종류 검증
