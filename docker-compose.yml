@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command:
+      - bash
+      - -c
+      - |
+        python manage.py migrate --noinput
+        python manage.py collectstatic --noinput --clear
+        gunicorn config.wsgi:application --bind 0.0.0.0:8000 --reload
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      TZ: "Asia/Seoul"
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+  db:
+    image: postgres:12.0-alpine
+    container_name: mint_postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=mint_server_user
+      - POSTGRES_PASSWORD=mint_server_password
+      - POSTGRES_DB=mint
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+volumes:
+  postgres_data:
