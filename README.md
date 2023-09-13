@@ -5,6 +5,7 @@ Welcome to Mint-Server repository! The purpose of the service is to help your fi
 ## Command
 
 ```
+git clone https://github.com/junngo/mint-server.git
 docker-compose build
 docker-compose up
 
