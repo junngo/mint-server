@@ -8,7 +8,7 @@ from .verifier import Verifier
 verifier_config = {
     'APP_KEY': 'app_key', 
     'APP_SECRET': 'app_secret_key',
-    'CANO': '50078816',
+    'CANO': '10074217',
     'ACNT_PRDT_CD': '01',
     'URL_BASE': 'https://test.url.com:29443',
     'TOKEN_FILE': 'token_test.yaml',
