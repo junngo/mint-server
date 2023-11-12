@@ -24,6 +24,9 @@ docker-compose run web python manage.py test # when not Running the container
 ## Batch Job List
 
 ```
-# Get the company info such as name, code, sector
+# [KRX] Get the company info such as name, code, sector
 docker-compose exec web python manage.py co_info
+
+# [KIS] Get the token from the KIS to access the API
+docker-compose exec web python manage.py create_token
 ```
