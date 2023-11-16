@@ -29,4 +29,8 @@ docker-compose exec web python manage.py co_info
 
 # [KIS] Get the token from the KIS to access the API
 docker-compose exec web python manage.py create_token
+
+# [KIS] Get the stock price from the KIS
+docker-compose exec web python manage.py gather_stock_price # If there is not date param, Call the today's date
+docker-compose exec web python manage.py gather_stock_price -s 20231101 -e 20231103
 ```
