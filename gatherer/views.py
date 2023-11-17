@@ -2,6 +2,7 @@ import ast
 import json
 import pandas as pd
 import requests
+import time
 
 from datetime import datetime, timedelta
 from stock import models
@@ -84,6 +85,7 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
             "FID_PERIOD_DIV_CODE": "D",     # D:일봉,W:주봉,M:월봉,Y:년봉
             "FID_ORG_ADJ_PRC": "1",         # 0:수정주가, 1:원주가
         }
+        time.sleep(0.05)
         response = requests.get(URL, headers=headers, params=query_param)
 
         if response.status_code == 200 and response.json()["rt_cd"] == '0':
