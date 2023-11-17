@@ -18,6 +18,7 @@ services:
       - db
     environment:
       TZ: "Asia/Seoul"
+      DJANGO_ENV: "prod"
   nginx:
     build: ./nginx
     ports:
