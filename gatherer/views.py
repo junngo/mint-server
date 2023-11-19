@@ -94,19 +94,19 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
                 company = models.Company.objects.filter(code=code).first()
 
                 date_format = datetime.strptime(stock["stck_bsop_date"], '%Y%m%d')
-                is_price = models.StockPrice.objects.filter(
-                    stock=company, stock_date=date_format).exists()
-                if is_price:
-                    continue
 
-                models.StockPrice.objects.create(
+                models.StockPrice.objects.update_or_create(
                     stock=company,
                     stock_date=date_format,
-                    open_price=stock["stck_oprc"],
-                    high_price=stock["stck_hgpr"],
-                    low_price=stock["stck_lwpr"],
-                    close_price=stock["stck_clpr"],
-                    volume=stock["acml_vol"],
+                    defaults={
+                        "stock": company,
+                        "stock_date": date_format,
+                        "open_price": stock["stck_oprc"],
+                        "high_price": stock["stck_hgpr"],
+                        "low_price": stock["stck_lwpr"],
+                        "close_price": stock["stck_clpr"],
+                        "volume": stock["acml_vol"],
+                    }
                 )
 
         start_date_input = end_date_input + timedelta(days=1)
