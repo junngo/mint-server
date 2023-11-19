@@ -91,6 +91,8 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
         if response.status_code == 200 and response.json()["rt_cd"] == '0':
             stocks = response.json()["output2"]
             for stock in stocks:
+                if not stock:
+                    continue
                 company = models.Company.objects.filter(code=code).first()
 
                 date_format = datetime.strptime(stock["stck_bsop_date"], '%Y%m%d')
