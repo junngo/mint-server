@@ -5,6 +5,8 @@ Welcome to Mint-Server repository! The purpose of the service is to help your fi
 ## Command
 
 ```
+ref) If you use the docker compose v2, Enter the command `docker compse` instead `docker-compose`
+
 git clone https://github.com/junngo/mint-server.git
 docker-compose build
 docker-compose up
