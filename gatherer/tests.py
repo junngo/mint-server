@@ -60,3 +60,10 @@ class StockTestCase(TestCase):
             end_date = datetime.strptime('20231105', '%Y%m%d')
             views.get_stock_price_kis(self.verifier, '005930', start_date, end_date)
             self.assertEqual(get.call_count, 1)
+
+    def test_get_financial_data(self):
+        pass
+        # verifier = Verifier()
+        # verifier.init_load()
+        # views.get_financial_data(verifier)
+        # views.get_financial_data(verifier, '005930')

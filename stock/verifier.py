@@ -14,7 +14,7 @@ class Verifier:
         """
         Load Required Data
         """
-        work_env = os.environ.get("DJANGO_ENV", "test")
+        work_env = os.environ.get("DJANGO_ENV", "prod")
         config_path = os.path.join(self.root_path, 'stock_config.yaml')
         token_path = Path(__file__).resolve().parents[2]
 
