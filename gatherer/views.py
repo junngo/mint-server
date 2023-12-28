@@ -3,7 +3,10 @@ import json
 import pandas as pd
 import requests
 import time
+import xml.etree.ElementTree as et
 
+from zipfile import ZipFile
+from io import BytesIO
 from datetime import datetime, timedelta
 from stock import models
 from stock.verifier import Verifier
@@ -33,6 +36,7 @@ def get_company_info():
             homepage=data[7],
             region=data[8],
         )
+
 
 def gather_stock_price(start_date, end_date):
     verifier = Verifier()
@@ -135,5 +139,166 @@ def get_stock_price_naver(code, start_date, end_date):
         print(price)
 
 
-def get_financial_data():
-    pass
+def get_dart_corp_code(verifier):
+    """
+    [DART] Get that corp code for the DART. Dart has unique corp id.
+    :param verifier: Needed info to call the api (Verifier)
+    :return: dart code formed DataFrame format
+    """
+    access_key = verifier.config['DART_KEY']
+    URL = "https://opendart.fss.or.kr/api/corpCode.xml"
+    query_param = {
+        "crtfc_key": access_key
+    }
+    time.sleep(0.05)
+    response = requests.get(URL, params=query_param)
+    zipfile = ZipFile(BytesIO(response.content))
+    xmlfile = {name: zipfile.read(name) for name in zipfile.namelist()}
+
+    """
+    xml example)
+    </result>
+        <list>
+            <corp_code>00126380</corp_code>
+            <corp_name>삼성전자</corp_name>
+            <stock_code>005930</stock_code>
+            <modify_date>20230110</modify_date>
+        </list>
+        <list>
+            <corp_code>01615845</corp_code>
+            <corp_name>메타버스월드</corp_name>
+            <stock_code> </stock_code>
+            <modify_date>20230228</modify_date>
+        </list>
+    </result>
+    """
+    xml_str = xmlfile['CORPCODE.xml'].decode('utf-8')
+    xml_result = et.fromstring(xml_str)
+
+    df_cols = ["corp_code", "corp_name", "stock_code", "modify_date"]
+    corp_data = []
+    for xml_list in xml_result:
+        row = {}
+        for col_name in df_cols:
+            value = xml_list.find(col_name).text.strip()
+            if not value:
+                value = None
+
+            row[col_name] = value
+        corp_data.append(row)
+
+    df = pd.DataFrame(corp_data, columns=df_cols)
+
+    return df
+
+
+def gather_financial_data(start_date, end_date):
+    verifier = Verifier()
+    verifier.init_load()
+
+    companys = models.Company.objects.all()
+    # companys = models.Company.objects.filter(code="005930")
+    dart_code = get_dart_corp_code(verifier)
+
+    for company in companys:
+        get_financial_data(
+            verifier
+            , company
+            , dart_code
+            , '2022'
+            , models.FinancialState.REPORT_1YEAR
+            , models.FinancialState.DIV_CFS
+        )
+
+
+def get_financial_data(verifier, company, dart_code_all, year, report_code, fs_div):
+    """
+    [DART] Get Stock financial data from the DART
+    :param verifier: Needed info to call the api (Verifier)
+    :param code: stock symbol (e.x, str-005930)
+    :param start_year: Start year (e.x, str-2023)
+    :param end_year: End year (e.x, str-2023)
+    :param report_kind: Repor Kind as 1year, 1Q (e.x, datetime-2023)
+    """
+    access_key = verifier.config['DART_KEY']
+    needed_cols = [
+        "ifrs-full_Revenue",    # 수익(매출액)
+        "ifrs-full_ProfitLoss", # 당기순이익
+        "보통주",
+        "우선주",
+    ]
+    dart_code = dart_code_all[dart_code_all['stock_code'] == company.code].iloc[0].corp_code
+    fina_data = {}
+
+    # Income Data
+    URL = "https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json"
+    query_param = {
+        "crtfc_key": access_key,
+        "corp_code": dart_code,
+        "bsns_year": year,
+        "reprt_code": report_code,  # REPORT_CHOICES
+        "fs_div": fs_div,           # OFS:재무제표, CFS:연결재무제표
+    }
+    time.sleep(0.7)
+    response = requests.get(URL, params=query_param)
+
+    # status: 013, message: 조회된 데이타가 없습니다.
+    if response.json()["status"] == "013":
+        return
+
+    if response.status_code == 200 and response.json()["status"] == "000":
+        fs, _ = models.FinancialState.objects.update_or_create(
+            company=company,
+            year=year,
+            report=report_code,
+            fs_div=fs_div,
+            defaults={
+                "company": company,
+                "year": year,
+                "report": report_code,
+                "fs_div": fs_div
+            }
+        )
+
+        data_list = response.json()["list"]
+        for data in data_list:
+            if data["account_id"] in needed_cols and data["sj_div"] == "CIS":
+            # CIS: 포괄손익계산서
+                fina_data[data["account_id"]] = int(data["thstrm_amount"])
+
+        models.IncomeStatement.objects.update_or_create(
+            fs=fs,
+            defaults={
+                "total_Revenue": fina_data.get("ifrs-full_Revenue", None),
+                "net_income": fina_data.get("ifrs-full_ProfitLoss", None),
+            }
+        )
+
+    # Share Count
+    # URL = "https://opendart.fss.or.kr/api/stockTotqySttus.json"
+    # query_param = {
+    #     "crtfc_key": access_key,
+    #     "corp_code": dart_code,
+    #     "bsns_year": year,
+    #     "reprt_code": report_code,
+    # }
+    # time.sleep(0.7)
+    # response = requests.get(URL, params=query_param)
+    # if response.status_code == 200 and response.json()["status"] == "000":
+    #     data_list = response.json()["list"]
+    #     for data in data_list:
+    #         if data["se"] in needed_cols and data["istc_totqy"] != "-":
+    #             fina_data[data["se"]] = int(data["istc_totqy"].replace(",", ""))
+
+    #     # eps = None
+    #     # if fina_data["ifrs-full_ProfitLoss"]:
+    #     #     eps = round(fina_data["ifrs-full_ProfitLoss"] / (fina_data.get("보통주", 0) + fina_data.get("우선주", 0)))
+
+    #     models.Ratios.objects.update_or_create(
+    #         fs=fs,
+    #         defaults={
+    #             "share_count": fina_data.get("보통주", None),
+    #             "preference_share_count": fina_data.get("우선주", None),
+    #             # "eps": eps,
+    #         }
+    #     )
