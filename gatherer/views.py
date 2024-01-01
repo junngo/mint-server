@@ -101,7 +101,7 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
 
                 date_format = datetime.strptime(stock["stck_bsop_date"], '%Y%m%d')
 
-                models.StockPrice.objects.update_or_create(
+                price, created = models.StockPrice.objects.update_or_create(
                     stock=company,
                     stock_date=date_format,
                     defaults={
@@ -114,6 +114,13 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
                         "volume": stock["acml_vol"],
                     }
                 )
+                if created:
+                    ratio = response.json()["output1"]
+                    price.share_count = ratio["lstn_stcn"]
+                    price.eps = ratio["eps"]
+                    price.per = ratio["per"]
+                    price.pbr = ratio["pbr"]
+                    price.save()
 
         start_date_input = end_date_input + timedelta(days=1)
 
