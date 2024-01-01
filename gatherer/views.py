@@ -7,7 +7,7 @@ import xml.etree.ElementTree as et
 
 from zipfile import ZipFile
 from io import BytesIO
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from stock import models
 from stock.verifier import Verifier
 
@@ -70,6 +70,7 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
         "custtype": "P" # 개인:P, 법인:B
     }
 
+    today_date = date.today()
     delta = (end_date - start_date).days + 1
     start_date_input = start_date
     DATE_RANGE = 98
@@ -114,7 +115,7 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
                         "volume": stock["acml_vol"],
                     }
                 )
-                if created:
+                if created and (today_date == date_format):
                     ratio = response.json()["output1"]
                     price.share_count = ratio["lstn_stcn"]
                     price.eps = ratio["eps"]
