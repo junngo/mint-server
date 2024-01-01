@@ -34,6 +34,10 @@ class StockPrice(models.Model):
     low_price = models.IntegerField()
     close_price = models.IntegerField()
     volume = models.BigIntegerField()
+    share_count = models.BigIntegerField(null=True, blank=True)
+    eps = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    per = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    pbr = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

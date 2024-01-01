@@ -8,7 +8,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
 class StockPriceAdmin(admin.ModelAdmin):
-    list_display = ('stock', 'stock_date', 'open_price', 'close_price', 'volume',)
+    list_display = ('stock', 'stock_date', 'open_price', 'close_price', 'volume', 'eps', 'per', 'pbr', 'share_count')
     search_fields = ('stock__name', 'stock__code',)
 
 
