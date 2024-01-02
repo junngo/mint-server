@@ -115,7 +115,7 @@ def get_stock_price_kis(verifier, code, start_date, end_date):
                         "volume": stock["acml_vol"],
                     }
                 )
-                if created and (today_date == date_format):
+                if (today_date == date_format.date()):
                     ratio = response.json()["output1"]
                     price.share_count = ratio["lstn_stcn"]
                     price.eps = ratio["eps"]
