@@ -5,6 +5,7 @@ import requests
 import time
 import xml.etree.ElementTree as et
 
+from faker import Faker
 from zipfile import ZipFile
 from io import BytesIO
 from datetime import datetime, timedelta, date
@@ -200,12 +201,15 @@ def get_dart_corp_code(verifier):
     return df
 
 
-def gather_financial_data(start_date, end_date):
+def gather_financial_data(year, company_code):
     verifier = Verifier()
     verifier.init_load()
 
-    companys = models.Company.objects.all()
-    # companys = models.Company.objects.filter(code="005930")
+    if company_code:
+        companys = models.Company.objects.filter(code=company_code)
+    else:
+        companys = models.Company.objects.all()
+
     dart_code = get_dart_corp_code(verifier)
 
     for company in companys:
@@ -213,7 +217,7 @@ def gather_financial_data(start_date, end_date):
             verifier
             , company
             , dart_code
-            , '2022'
+            , year
             , models.FinancialState.REPORT_1YEAR
             , models.FinancialState.DIV_CFS
         )
@@ -230,12 +234,13 @@ def get_financial_data(verifier, company, dart_code_all, year, report_code, fs_d
     """
     access_key = verifier.config['DART_KEY']
     needed_cols = [
-        "ifrs-full_Revenue",    # 수익(매출액)
-        "ifrs-full_ProfitLoss", # 당기순이익
+        ["ifrs-full_Revenue",],    # 수익(매출액)
+        ["ifrs-full_ProfitLoss",], # 당기순이익
         "보통주",
         "우선주",
     ]
     dart_code = dart_code_all[dart_code_all['stock_code'] == company.code].iloc[0].corp_code
+    # print(dart_code)
     fina_data = {}
 
     # Income Data
@@ -247,8 +252,16 @@ def get_financial_data(verifier, company, dart_code_all, year, report_code, fs_d
         "reprt_code": report_code,  # REPORT_CHOICES
         "fs_div": fs_div,           # OFS:재무제표, CFS:연결재무제표
     }
-    time.sleep(0.7)
-    response = requests.get(URL, params=query_param)
+
+    fake = Faker()
+    user_agent = fake.user_agent()
+    headers={'User-Agent': user_agent}
+
+    time.sleep(1)
+    sess = requests.Session()
+    adapter = requests.adapters.HTTPAdapter(max_retries = 3)
+    sess.mount('https://', adapter)
+    response = sess.get(URL, params=query_param, headers=headers)
 
     # status: 013, message: 조회된 데이타가 없습니다.
     if response.json()["status"] == "013":
@@ -270,15 +283,16 @@ def get_financial_data(verifier, company, dart_code_all, year, report_code, fs_d
 
         data_list = response.json()["list"]
         for data in data_list:
-            if data["account_id"] in needed_cols and data["sj_div"] == "CIS":
-            # CIS: 포괄손익계산서
+            # 당기순이익
+            if data["account_id"] in needed_cols[0]: # and data["sj_div"] == "CIS":
+                # CIS: 포괄손익계산서
                 fina_data[data["account_id"]] = int(data["thstrm_amount"])
-
-        models.IncomeStatement.objects.update_or_create(
+        # print(fina_data)
+        models.IncomeStatement.objects.get_or_create(
             fs=fs,
             defaults={
                 "total_Revenue": fina_data.get("ifrs-full_Revenue", None),
-                "net_income": fina_data.get("ifrs-full_ProfitLoss", None),
+                # "net_income": fina_data.get("ifrs-full_ProfitLoss", None),
             }
         )
 

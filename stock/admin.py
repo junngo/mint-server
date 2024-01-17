@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, StockPrice, FinancialState
+from .models import Company, StockPrice, FinancialState, IncomeStatement
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -12,11 +12,19 @@ class StockPriceAdmin(admin.ModelAdmin):
     search_fields = ('stock__name', 'stock__code',)
 
 
-# class FinancialStateAdmin(admin.ModelAdmin):
-#     list_display = ('company', 'year', 'report', 'eps',)
-#     search_fields = ('company_name', 'company__code',)
+class IncomeStatementInline(admin.TabularInline):
+    model = IncomeStatement
+
+
+class FinancialStateAdmin(admin.ModelAdmin):
+    list_display = ('company', 'year', 'report', 'fs_div',)
+    search_fields = ('company__name', 'company__code',)
+
+    inlines = [
+        IncomeStatementInline,
+    ]
 
 
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(StockPrice, StockPriceAdmin)
-# admin.site.register(FinancialState, FinancialStateAdmin)
+admin.site.register(FinancialState, FinancialStateAdmin)
