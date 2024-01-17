@@ -31,6 +31,8 @@ if os.environ.get('ALLOWED_HOSTS'):
 else:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split(' ')
 
 # Application definition
 DJANGO_APPS = [
