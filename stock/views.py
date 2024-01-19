@@ -1,6 +1,9 @@
 import json
 import requests
 
+from rest_framework.generics import ListAPIView
+from .models import Company
+from .serializers import CompanySerializer
 
 def create_token(verifier):
     """
@@ -24,3 +27,8 @@ def create_token(verifier):
         print("[create_token] Success - " + str(res.status_code))
     else:
         print("[create_token] Fail - " + str(res.status_code))
+
+
+class CompanyListView(ListAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
