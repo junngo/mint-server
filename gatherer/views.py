@@ -239,7 +239,13 @@ def get_financial_data(verifier, company, dart_code_all, year, report_code, fs_d
         "보통주",
         "우선주",
     ]
-    dart_code = dart_code_all[dart_code_all['stock_code'] == company.code].iloc[0].corp_code
+
+    if dart_code_all['stock_code'] == company.code:
+        dart_code = dart_code_all[dart_code_all['stock_code'] == company.code].iloc[0].corp_code
+    else:
+        print(f"Not exist dart code: {company.code}")
+        return
+
     # print(dart_code)
     fina_data = {}
 
