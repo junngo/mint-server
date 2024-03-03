@@ -38,4 +38,7 @@ docker-compose exec web python manage.py gather_stock_price -s 20231101 -e 20231
 
 # [DART] Get the financial data
 docker compose exec web python manage.py gather_financial
+
+# Calculating moving average
+docker compose exec web python manage.py get_moving_average -s 2024-01-01 -e 2024-01-05 -p 5
 ```
